@@ -14,17 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_ACCESS_KEY_ID: mock_access_key
-      AWS_SECRET_ACCESS_KEY: mock_secret_key
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: '3.0.0'
+          terraform_version: '3.76.1'
 
       - name: Terraform Init
         run: terraform init
@@ -35,4 +35,4 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        if: github.ref == 'refs/heads/master'  
+        if: github.ref == 'refs/heads/main'
