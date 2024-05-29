@@ -18,7 +18,7 @@ jobs:
     - name: Start LocalStack
       run: |
         docker run -d -p 4566:4566 --name localstack localstack/localstack:latest
-        sleep 30 # Wait for LocalStack to be ready
+        sleep 30
 
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v2
@@ -37,7 +37,7 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve "tfplan"
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/master'
 
     - name: Stop LocalStack container
       run: docker stop localstack
