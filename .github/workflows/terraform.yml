@@ -17,9 +17,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install LocalStack
+        run: |
+          pip install localstack
+
       - name: Set up LocalStack
         run: |
-          
           localstack start
 
       - name: Install Terraform
