@@ -3,25 +3,26 @@ name: Terraform CI
 on:
   push:
     branches:
-      - main  # or your default branch
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   terraform:
     name: 'Terraform GitHub Actions'
     runs-on: ubuntu-latest
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Terraform
+      - name: Set up LocalStack
+        run: |
+          
+          localstack start
+
+      - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: '3.76.1'
