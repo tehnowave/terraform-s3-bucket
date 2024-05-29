@@ -1,42 +1,43 @@
-name: Terraform CI
+name: Terraform with LocalStack CI
 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
-  terraform:
-    name: 'Terraform GitHub Actions'
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Docker
+      uses: actions/setup-docker@v2
 
-      - name: Install LocalStack
-        run: |
-          pip install localstack
+    - name: Start LocalStack
+      run: |
+        docker run -d -p 4566:4566 --name localstack localstack/localstack:latest
+        sleep 30 # Wait for LocalStack to be ready
 
-      - name: Set up LocalStack
-        run: |
-          localstack start
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: '3.76.1'
 
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: '3.76.1'
+    - name: Terraform Init
+      run: terraform init
 
-      - name: Terraform Init
-        run: terraform init
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+      if: github.ref == 'refs/heads/main'
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        if: github.ref == 'refs/heads/main'
+    - name: Stop LocalStack container
+      run: docker stop localstack
