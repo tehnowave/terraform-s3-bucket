@@ -36,7 +36,7 @@ jobs:
       run: terraform plan -out=tfplan
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve "tfplan"
       if: github.ref == 'refs/heads/main'
 
     - name: Stop LocalStack container
